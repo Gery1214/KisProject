@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regisztráció - Kisprojekt</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { margin-top: 50px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Regisztráció</h3>
+                </div>
+                <div class="card-body">
+
+                    <form id="regForm" action="szerver.php" method="POST" class="needs-validation" novalidate>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Név:</label>
+                            <input type="text" class="form-control" id="name" name="name" maxlength="255"
+                                   pattern="^[^0-9]+$"
+                                   title="A név nem tartalmazhat számot!"
+                                   required>
+                            <div class="invalid-feedback" id="name-error">
+                                Kérjük, add meg a nevedet (számok nélkül)!
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="login_name" class="form-label">Login név:</label>
+                            <input type="text" class="form-control" id="login_name" name="login_name" maxlength="100" required>
+                            <div class="invalid-feedback">
+                                Kérjük, adj meg egy login nevet!
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Jelszó:</label>
+                            <input type="password" class="form-control" id="password" name="password" maxlength="25" required>
+                            <div class="invalid-feedback">
+                                A jelszó megadása kötelező (max 25 karakter)!
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Szerepkör:</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="">-- Válassz --</option>
+                                <option value="felhasznalo">felhasználó</option>
+                                <option value="admin">admin</option>
+                                <option value="karbantarto">karbantartó</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Kérjük, válassz szerepkört!
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Autó:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="car" id="car_yes" value="1" checked>
+                                <label class="form-check-label" for="car_yes">van</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="car" id="car_no" value="0">
+                                <label class="form-check-label" for="car_no">nincs</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">PC:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pc" id="pc_yes" value="1" checked>
+                                <label class="form-check-label" for="pc_yes">van</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pc" id="pc_no" value="0">
+                                <label class="form-check-label" for="pc_no">nincs</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Mobil:</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" maxlength="255"
+                                   pattern="^[0-9+\-\/\#\s\(\)]+$"
+                                   title="Csak számok és a + - / # ( ) szóköz karakterek engedélyezettek!"
+                                   required>
+                            <div class="invalid-feedback" id="phone-error">
+                                Csak számokat és a következő jeleket használhatod: + - / # ( )
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="text" class="form-control" id="email" name="email" maxlength="255"
+                                   pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$"
+                                   title="Érvényes email cím szükséges (pl. pelda@domain.hu)"
+                                   required>
+                            <div class="invalid-feedback" id="email-error">
+                                Kérjük, adj meg egy érvényes email címet (pl. pelda@domain.hu)!
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-primary">Küldés</button>
+                            <button type="reset" class="btn btn-secondary">Mégsem</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        'use strict'
+
+        var forms = document.querySelectorAll('.needs-validation')
+
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+
+                    var nameField = document.getElementById('name');
+                    var nameValue = nameField.value;
+                    var containsNumber = /[0-9]/.test(nameValue);
+
+                    if (containsNumber) {
+                        nameField.setCustomValidity("Invalid");
+                        document.getElementById('name-error').innerText = "A név nem tartalmazhat számot!";
+                    } else {
+                        nameField.setCustomValidity("");
+                        document.getElementById('name-error').innerText = "Kérjük, add meg a nevedet (számok nélkül)!";
+                    }
+
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+
+        var phoneField = document.getElementById('phone');
+
+        phoneField.addEventListener('input', function () {
+            var phoneValue = phoneField.value;
+            var phoneRegex = /^[0-9+\-\/\#\s\(\)]+$/;
+
+            if (phoneValue.length > 0 && !phoneRegex.test(phoneValue)) {
+                phoneField.setCustomValidity("Invalid");
+                document.getElementById('phone-error').innerText = "Csak számokat és a + - / # ( ) jeleket használhatod!";
+            } else {
+                phoneField.setCustomValidity("");
+                document.getElementById('phone-error').innerText = "Csak számokat és a következő jeleket használhatod: + - / # ( )";
+            }
+        });
+
+        var emailField = document.getElementById('email');
+
+        emailField.addEventListener('input', function () {
+            var emailValue = emailField.value;
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+            if (emailValue.length > 0 && !emailRegex.test(emailValue)) {
+                emailField.setCustomValidity("Invalid");
+                document.getElementById('email-error').innerText = "Érvénytelen email cím! Példa: pelda@domain.hu";
+            } else {
+                emailField.setCustomValidity("");
+                document.getElementById('email-error').innerText = "Kérjük, adj meg egy érvényes email címet (pl. pelda@domain.hu)!";
+            }
+        });
+    })()
+</script>
+
+</body>
+</html>
